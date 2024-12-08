@@ -43,7 +43,6 @@ extension HandAnchorRepresentable {
             return false
         }
         
-        print("distance: \(distance(leftPalm, rightPalm))")
         return distance(leftPalm, rightPalm) <= 0.03
     }
 }

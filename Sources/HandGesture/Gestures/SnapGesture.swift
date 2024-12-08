@@ -21,6 +21,7 @@ public class SnapGesture: HandGesture {
     var lastPreSnap: Date? = nil
     
     public enum SnapPose: Equatable, Sendable {
+        case noSnap
         case preSnap
         case postSnap
     }
@@ -36,20 +37,16 @@ public class SnapGesture: HandGesture {
                let snapPose = rightHand.snapPose() {
                 let value: Value?
                 switch snapPose {
+                case .noSnap:
+                    value = .init(pose: .noSnap, chirality: hand)
                 case .preSnap:
-                    print("pre")
                     lastPreSnap = Date()
-                    if lastPreSnap != nil {
-                        value = nil
-                    } else {
-                        value = .init(pose: .preSnap, chirality: .right)
-                    }
+                    value = .init(pose: .preSnap, chirality: hand)
                 case .postSnap:
-                    print("post")
                     if let preSnap = lastPreSnap,
                        -preSnap.timeIntervalSinceNow <= maximumSnapTime {
                         lastPreSnap = nil
-                        value = .init(pose: .postSnap, chirality: .right)
+                        value = .init(pose: .postSnap, chirality: hand)
                     } else {
                         value = nil
                     }
@@ -61,20 +58,16 @@ public class SnapGesture: HandGesture {
                let snapPose = leftHand.snapPose() {
                 let value: Value?
                 switch snapPose {
+                case .noSnap:
+                    value = .init(pose: .noSnap, chirality: hand)
                 case .preSnap:
-                    print("pre")
                     lastPreSnap = Date()
-                    if lastPreSnap != nil {
-                        value = nil
-                    } else {
-                        value = .init(pose: .preSnap, chirality: .left)
-                    }
+                    value = .init(pose: .preSnap, chirality: hand)
                 case .postSnap:
-                    print("post")
                     if let preSnap = lastPreSnap,
                        -preSnap.timeIntervalSinceNow <= maximumSnapTime {
                         lastPreSnap = nil
-                        value = .init(pose: .postSnap, chirality: .left)
+                        value = .init(pose: .postSnap, chirality: hand)
                     } else {
                         value = nil
                     }
@@ -82,7 +75,7 @@ public class SnapGesture: HandGesture {
                 return value
             }
         }
-        return nil
+        return .init(pose: .noSnap, chirality: hand)
     }
 }
 
