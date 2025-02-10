@@ -101,6 +101,7 @@ public class EndGesture<Gesture: HandGesture>: HandGesture {
            let lastValue {
             action(lastValue)
         }
+        lastValue = value
         return value
     }
     
