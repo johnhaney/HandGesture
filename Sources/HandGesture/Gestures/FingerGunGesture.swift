@@ -6,9 +6,12 @@
 //
 
 import Foundation
+#if canImport(ARKit)
 import ARKit
+#endif
 import RealityKit
 import Spatial
+import ARUnderstanding
 
 public class FingerGunGesture: HandGesture {
     public struct Value: Equatable, Sendable {
@@ -28,7 +31,7 @@ public class FingerGunGesture: HandGesture {
         case .right:
             guard let rightHand = handUpdates.right,
                 let (position, direction) = rightHand.indexFingerTipVector(),
-                  let (thumbPosition, thumbDirection) = rightHand.thumbVector()
+                  let (_, thumbDirection) = rightHand.thumbVector()
             else {
                 return nil
             }
@@ -39,7 +42,7 @@ public class FingerGunGesture: HandGesture {
         case .left:
             guard let leftHand = handUpdates.left,
                 let (position, direction) = leftHand.indexFingerTipVector(),
-                  let (thumbPosition, thumbDirection) = leftHand.thumbVector()
+                  let (_, thumbDirection) = leftHand.thumbVector()
             else {
                 return nil
             }

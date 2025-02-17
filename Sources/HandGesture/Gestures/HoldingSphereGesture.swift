@@ -6,7 +6,10 @@
 //
 
 import Foundation
+#if canImport(ARKit)
 import ARKit
+#endif
+import ARUnderstanding
 
 public class HoldingSphereGesture: HandGesture {
     // The attributes of a holding sphere gesture

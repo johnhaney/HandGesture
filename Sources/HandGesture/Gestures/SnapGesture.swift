@@ -6,8 +6,10 @@
 //
 
 import Foundation
-import ARUnderstanding
+#if canImport(ARKit)
 import ARKit
+#endif
+import ARUnderstanding
 
 public class SnapGesture: HandGesture {
     public struct Value : Equatable, Sendable {

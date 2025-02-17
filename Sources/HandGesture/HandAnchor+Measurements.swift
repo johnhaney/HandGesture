@@ -7,7 +7,9 @@
 
 import ARUnderstanding
 import RealityKit
+#if canImport(ARKit)
 import ARKit
+#endif
 
 // Finger guns (thumb triggers)
 
@@ -27,8 +29,8 @@ public extension HandAnchorRepresentable {
     func thumbVector() -> (SIMD3<Float>, SIMD3<Float>)? {
         guard let skeleton = self.handSkeleton else { return nil }
         
-        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.thumbTip).anchorFromJointTransform).translation
-        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.thumbIntermediateTip).anchorFromJointTransform).translation
+        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.thumbTip).anchorFromJointTransform).translation
+        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.thumbIntermediateTip).anchorFromJointTransform).translation
         
         let direction = normalize(lhs1 - lhs2)
         let origin = lhs1 + 0.005 * direction
@@ -39,8 +41,8 @@ public extension HandAnchorRepresentable {
     func indexFingerTipVector() -> (SIMD3<Float>, SIMD3<Float>)? {
         guard let skeleton = self.handSkeleton else { return nil }
         
-        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.indexFingerTip).anchorFromJointTransform).translation
-        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.indexFingerIntermediateTip).anchorFromJointTransform).translation
+        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.indexFingerTip).anchorFromJointTransform).translation
+        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.indexFingerIntermediateTip).anchorFromJointTransform).translation
         
         let direction = normalize(lhs1 - lhs2)
         let origin = lhs1 + 0.005 * direction
@@ -51,8 +53,8 @@ public extension HandAnchorRepresentable {
     func middleFingerTipVector() -> (SIMD3<Float>, SIMD3<Float>)? {
         guard let skeleton = self.handSkeleton else { return nil }
         
-        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.middleFingerTip).anchorFromJointTransform).translation
-        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.middleFingerIntermediateTip).anchorFromJointTransform).translation
+        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.middleFingerTip).anchorFromJointTransform).translation
+        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.middleFingerIntermediateTip).anchorFromJointTransform).translation
         
         let direction = normalize(lhs1 - lhs2)
         let origin = lhs1 + 0.005 * direction
@@ -63,8 +65,8 @@ public extension HandAnchorRepresentable {
     func ringFingerTipVector() -> (SIMD3<Float>, SIMD3<Float>)? {
         guard let skeleton = self.handSkeleton else { return nil }
         
-        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.ringFingerTip).anchorFromJointTransform).translation
-        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.ringFingerIntermediateTip).anchorFromJointTransform).translation
+        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.ringFingerTip).anchorFromJointTransform).translation
+        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.ringFingerIntermediateTip).anchorFromJointTransform).translation
         
         let direction = normalize(lhs1 - lhs2)
         let origin = lhs1 + 0.005 * direction
@@ -75,8 +77,8 @@ public extension HandAnchorRepresentable {
     func littleFingerTipVector() -> (SIMD3<Float>, SIMD3<Float>)? {
         guard let skeleton = self.handSkeleton else { return nil }
         
-        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.littleFingerTip).anchorFromJointTransform).translation
-        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.littleFingerIntermediateTip).anchorFromJointTransform).translation
+        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.littleFingerTip).anchorFromJointTransform).translation
+        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.littleFingerIntermediateTip).anchorFromJointTransform).translation
         
         let direction = normalize(lhs1 - lhs2)
         let origin = lhs1 + 0.005 * direction
@@ -84,13 +86,12 @@ public extension HandAnchorRepresentable {
         return (origin, direction)
     }
     
-    func position(joint: ARKit.HandSkeleton.JointName) -> SIMD3<Float>? {
+    func position(joint: HandSkeleton.JointName) -> SIMD3<Float>? {
         guard let skeleton = self.handSkeleton else { return nil }
         return Transform(matrix: originFromAnchorTransform * skeleton.joint(joint).anchorFromJointTransform).translation
     }
     
     func position(at position: SyntheticHandPosition) -> SIMD3<Float>? {
-        guard let skeleton = self.handSkeleton else { return nil }
         switch position {
         case .insidePalm:
             return insidePalmPosition()
@@ -114,7 +115,7 @@ public extension HandAnchorRepresentable {
         return handPalmPosition + 0.025 * insideDirection
     }
     
-    func distanceBetween(_ joint1: ARKit.HandSkeleton.JointName, _ joint2: ARKit.HandSkeleton.JointName) -> Float? {
+    func distanceBetween(_ joint1: HandSkeleton.JointName, _ joint2: HandSkeleton.JointName) -> Float? {
         guard let lhs1 = position(joint: joint1),
               let lhs2 = position(joint: joint2)
         else { return nil }
@@ -124,10 +125,10 @@ public extension HandAnchorRepresentable {
     func insideSphere() -> Sphere? {
         guard let skeleton = self.handSkeleton else { return nil }
         
-        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.middleFingerKnuckle).anchorFromJointTransform).translation
-        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.thumbTip).anchorFromJointTransform).translation
-        let lhs3 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.indexFingerTip).anchorFromJointTransform).translation
-        let lhs4 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.littleFingerTip).anchorFromJointTransform).translation
+        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.middleFingerKnuckle).anchorFromJointTransform).translation
+        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.thumbTip).anchorFromJointTransform).translation
+        let lhs3 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.indexFingerTip).anchorFromJointTransform).translation
+        let lhs4 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.littleFingerTip).anchorFromJointTransform).translation
         
         let center: SIMD3<Float>
         let radius: Float

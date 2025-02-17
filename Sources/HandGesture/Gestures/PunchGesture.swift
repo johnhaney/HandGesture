@@ -6,7 +6,9 @@
 //
 
 import Foundation
+#if canImport(ARKit)
 import ARKit
+#endif
 import RealityKit
 import Spatial
 import ARUnderstanding
@@ -64,9 +66,9 @@ public struct Fist: Equatable, Sendable {
 extension HandAnchorRepresentable {
     func fistPose() -> Fist? {
         guard let skeleton = self.handSkeleton else { return nil }
-        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.middleFingerMetacarpal).anchorFromJointTransform).translation
-        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.middleFingerKnuckle).anchorFromJointTransform).translation
-        let lhs3 = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.middleFingerIntermediateBase).anchorFromJointTransform).translation
+        let lhs1 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.middleFingerMetacarpal).anchorFromJointTransform).translation
+        let lhs2 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.middleFingerKnuckle).anchorFromJointTransform).translation
+        let lhs3 = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.middleFingerIntermediateBase).anchorFromJointTransform).translation
 
         let palmDirection = normalize(lhs2 - lhs1)
         
@@ -77,24 +79,24 @@ extension HandAnchorRepresentable {
         }
         
         do {
-            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.indexFingerKnuckle).anchorFromJointTransform).translation
-            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.indexFingerIntermediateBase).anchorFromJointTransform).translation
+//            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.indexFingerKnuckle).anchorFromJointTransform).translation
+//            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.indexFingerIntermediateBase).anchorFromJointTransform).translation
             let fingerDirection = normalize(lhs3 - lhs2)
             let linear = dot(palmDirection, fingerDirection)
             if linear > 0.3 { return nil }
         }
         
         do {
-            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.ringFingerKnuckle).anchorFromJointTransform).translation
-            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.ringFingerIntermediateBase).anchorFromJointTransform).translation
+//            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.ringFingerKnuckle).anchorFromJointTransform).translation
+//            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.ringFingerIntermediateBase).anchorFromJointTransform).translation
             let fingerDirection = normalize(lhs3 - lhs2)
             let linear = dot(palmDirection, fingerDirection)
             if linear > 0.3 { return nil }
         }
         
         do {
-            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.littleFingerKnuckle).anchorFromJointTransform).translation
-            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(ARKit.HandSkeleton.JointName.littleFingerIntermediateBase).anchorFromJointTransform).translation
+//            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.littleFingerKnuckle).anchorFromJointTransform).translation
+//            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.littleFingerIntermediateBase).anchorFromJointTransform).translation
             let fingerDirection = normalize(lhs3 - lhs2)
             let linear = dot(palmDirection, fingerDirection)
             if linear > 0.3 { return nil }

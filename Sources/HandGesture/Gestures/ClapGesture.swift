@@ -7,7 +7,10 @@
 
 import Foundation
 import ARUnderstanding
+#if canImport(ARKit)
 import ARKit
+#endif
+
 import RealityKit
 import Spatial
 

@@ -8,7 +8,9 @@
 import ARUnderstanding
 import SwiftUI
 import RealityKit
+#if canImport(ARKit)
 import ARKit
+#endif
 
 public extension View {
     func handGesture<Gesture: HandGesture>(_ gesture: Gesture) -> some View {
@@ -34,11 +36,6 @@ public protocol HandGesture: AnyObject, Equatable {
     var id: UUID { get }
     associatedtype Value : Equatable, Sendable
     func update(with: HandTrackingModel.HandsUpdates) -> Value?
-}
-
-public protocol HandGestureAnchoring: HandGesture {
-    associatedtype Anchor: ARKit.Anchor
-    func anchor(from: Value) -> Anchor
 }
 
 public extension HandGesture {
