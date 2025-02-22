@@ -39,10 +39,6 @@ public protocol HandGesture: AnyObject, Equatable {
 }
 
 public extension HandGesture {
-    static func ==(lhs: any HandGesture, rhs: any HandGesture) -> Bool {
-        lhs.id == rhs.id
-    }
-    
     static func ==(lhs: Self, rhs: any HandGesture) -> Bool {
         lhs.id == rhs.id
     }
