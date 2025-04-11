@@ -18,7 +18,6 @@ public class HoldingSphereGesture: HandGesture {
         public let chirality: HandAnchor.Chirality
     }
     
-    public let id: UUID = UUID()
     var minimumRadius: Float
     var maximumRadius: Float
     var hand: HandAnchor.Chirality

@@ -22,8 +22,6 @@ public class ClapGesture: HandGesture {
     
     public init() {}
     
-    public let id: UUID = UUID()
-    
     public func update(with handUpdates: HandTrackingModel.HandsUpdates) -> Value? {
         if let leftHand = handUpdates.left,
            let rightHand = handUpdates.right,

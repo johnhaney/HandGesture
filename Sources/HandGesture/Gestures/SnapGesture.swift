@@ -17,7 +17,6 @@ public class SnapGesture: HandGesture {
         public let chirality: HandAnchor.Chirality
     }
     
-    public let id: UUID = UUID()
     var hand: HandAnchor.Chirality
     var maximumSnapTime: TimeInterval = 0.5
     var lastPreSnap: Date? = nil

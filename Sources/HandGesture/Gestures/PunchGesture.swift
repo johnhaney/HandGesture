@@ -19,7 +19,6 @@ public class PunchGesture: HandGesture {
         public var fist: Fist
     }
     
-    public let id: UUID = UUID()
     var hand: HandAnchor.Chirality
     var previous: Fist?
 
@@ -79,24 +78,18 @@ extension HandAnchorRepresentable {
         }
         
         do {
-//            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.indexFingerKnuckle).anchorFromJointTransform).translation
-//            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.indexFingerIntermediateBase).anchorFromJointTransform).translation
             let fingerDirection = normalize(lhs3 - lhs2)
             let linear = dot(palmDirection, fingerDirection)
             if linear > 0.3 { return nil }
         }
         
         do {
-//            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.ringFingerKnuckle).anchorFromJointTransform).translation
-//            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.ringFingerIntermediateBase).anchorFromJointTransform).translation
             let fingerDirection = normalize(lhs3 - lhs2)
             let linear = dot(palmDirection, fingerDirection)
             if linear > 0.3 { return nil }
         }
         
         do {
-//            let base = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.littleFingerKnuckle).anchorFromJointTransform).translation
-//            let knuckle = Transform(matrix: originFromAnchorTransform * skeleton.joint(HandSkeleton.JointName.littleFingerIntermediateBase).anchorFromJointTransform).translation
             let fingerDirection = normalize(lhs3 - lhs2)
             let linear = dot(palmDirection, fingerDirection)
             if linear > 0.3 { return nil }

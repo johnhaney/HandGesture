@@ -19,7 +19,6 @@ public class FingerGunGesture: HandGesture {
         public let thumbDown: Bool
     }
     
-    public let id: UUID = UUID()
     var hand: HandAnchor.Chirality
 
     public init(hand: HandAnchor.Chirality) {
