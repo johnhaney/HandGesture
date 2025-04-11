@@ -12,102 +12,15 @@ import RealityKit
 import ARKit
 #endif
 
-public extension View {
-    func handGesture<Gesture: HandGesture>(_ gesture: Gesture) -> some View {
-        modifier(HandGestureModifier(gesture: gesture))
-    }
-}
-
-public struct HandGestureModifier<Gesture: HandGesture>: ViewModifier {
-    var handTrackingModel: HandTrackingModel = HandTrackingModel.shared
-    var gesture: Gesture
-    public func body(content: Content) -> some View {
-        content
-            .onAppear {
-                handTrackingModel.add(gesture)
-            }
-            .onDisappear {
-                handTrackingModel.remove(gesture)
-            }
-    }
-}
-
-public protocol HandGesture: AnyObject, Equatable {
-    var id: UUID { get }
+public protocol HandGesture: AnyObject {
     associatedtype Value : Equatable, Sendable
     func update(with: HandTrackingModel.HandsUpdates) -> Value?
-}
-
-public extension HandGesture {
-    static func ==(lhs: Self, rhs: any HandGesture) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    static func ==(lhs: any HandGesture, rhs: Self) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    static func ==(lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    func onChanged(perform action: @escaping (Value) -> Void) -> ChangeGesture<Self> {
-        ChangeGesture(self, perform: action)
-    }
-    
-    func onEnded(perform action: @escaping (Value) -> Void) -> EndGesture<Self> {
-        EndGesture(self, perform: action)
-    }
-}
-
-public class ChangeGesture<Gesture: HandGesture>: HandGesture {
-    public let id: UUID = UUID()
-    private var gesture: Gesture
-    private var action: (Gesture.Value) -> Void
-    var lastValue: Gesture.Value? = nil
-    
-    public func update(with updates: HandTrackingModel.HandsUpdates) -> Gesture.Value? {
-        let value = gesture.update(with: updates)
-        if let value,
-           value != lastValue {
-            action(value)
-            lastValue = value
-        }
-        return value
-    }
-    
-    init(_ gesture: Gesture, perform action: @escaping (Gesture.Value) -> Void) {
-        self.gesture = gesture
-        self.action = action
-    }
-}
-
-public class EndGesture<Gesture: HandGesture>: HandGesture {
-    public let id: UUID = UUID()
-    private var gesture: Gesture
-    private var action: (Gesture.Value) -> Void
-    var lastValue: Gesture.Value? = nil
-
-    public func update(with updates: HandTrackingModel.HandsUpdates) -> Gesture.Value? {
-        let value = gesture.update(with: updates)
-        if value == nil,
-           let lastValue {
-            action(lastValue)
-        }
-        lastValue = value
-        return value
-    }
-    
-    init(_ gesture: Gesture, perform action: @escaping (Gesture.Value) -> Void) {
-        self.gesture = gesture
-        self.action = action
-    }
 }
 
 public class HandTrackingModel {
     @MainActor static let shared: HandTrackingModel = HandTrackingModel()
     var latestHandTracking: HandsUpdates
-    private var gestures: [any HandGesture] = []
+    @MainActor private var gestures: [UUID: any HandGesture] = [:]
     private var trackingSession: UUID? = nil
     public struct HandsUpdates {
         public var left: (any HandAnchorRepresentable)?
@@ -118,24 +31,26 @@ public class HandTrackingModel {
         latestHandTracking = HandsUpdates()
     }
     
-    func update() {
-        for gesture in gestures {
+    @MainActor func update() {
+        for gesture in gestures.values {
             _ = gesture.update(with: latestHandTracking)
         }
     }
     
-    @MainActor func add<Gesture: HandGesture>(_ gesture: Gesture) {
+    @MainActor func add<Gesture: HandGesture>(_ gesture: Gesture) -> UUID {
         let needsStart = gestures.isEmpty
         defer {
             if needsStart {
                 startTracking()
             }
         }
-        gestures.append(gesture)
+        let id = UUID()
+        gestures[id] = gesture
+        return id
     }
     
-    @MainActor func remove<Gesture: HandGesture>(_ gesture: Gesture) {
-        gestures.removeAll(where: { gesture == $0 })
+    @MainActor func remove(_ id: UUID) {
+        gestures.removeValue(forKey: id)
         if gestures.isEmpty {
             stopTracking()
         }
@@ -156,6 +71,7 @@ public class HandTrackingModel {
     }
     
     @MainActor func doTracking(_ trackingSession: UUID) async {
+        #if os(visionOS)
         for await hand in ARUnderstanding.handUpdates {
             guard trackingSession == self.trackingSession else { return }
             switch hand.anchor.chirality {
@@ -166,6 +82,7 @@ public class HandTrackingModel {
             }
             update()
         }
+        #endif
     }
 }
 
