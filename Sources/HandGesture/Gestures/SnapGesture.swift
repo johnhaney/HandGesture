@@ -15,10 +15,23 @@ public class SnapGesture: HandGesture {
     public struct Value : Equatable, Sendable {
         public let pose: SnapPose
         public let chirality: HandAnchor.Chirality
+        
+        public static func noSnap(_ chirality: HandAnchor.Chirality) -> Value {
+            .init(pose: .noSnap, chirality: chirality)
+        }
+        
+        public static func preSnap(_ chirality: HandAnchor.Chirality) -> Value {
+            .init(pose: .preSnap, chirality: chirality)
+        }
+        
+        public static func postSnap(_ chirality: HandAnchor.Chirality) -> Value {
+            .init(pose: .postSnap, chirality: chirality)
+        }
     }
     
     var hand: HandAnchor.Chirality
     var maximumSnapTime: TimeInterval = 0.5
+    var lastValue: Value? = nil
     var lastPreSnap: Date? = nil
     
     public enum SnapPose: Equatable, Sendable {
@@ -27,80 +40,83 @@ public class SnapGesture: HandGesture {
         case postSnap
     }
     
-    public init(hand: HandAnchor.Chirality) {
+    public init(hand: HandAnchor.Chirality, maximumSnapTime: TimeInterval = 0.25) {
         self.hand = hand
+        self.maximumSnapTime = maximumSnapTime
     }
     
+    /// update(with:) returns some value as long as the gesture is being recognized, and nil when it is not recognized
+    /// in this case, we return values during preSnap and once on postSnap (if it was fast enough), and nil otherwise
     public func update(with handUpdates: HandTrackingModel.HandsUpdates) -> Value? {
-        switch hand {
-        case .right:
-            if let rightHand = handUpdates.right,
-               let snapPose = rightHand.snapPose() {
-                let value: Value?
+        if let handUpdate = handUpdates[hand] {
+            let value: Value?
+            if lastValue == .postSnap(hand) {
+                lastPreSnap = nil
+                value = nil
+            } else if let snapPose = handUpdate.snapPose() {
                 switch snapPose {
                 case .noSnap:
-                    value = .init(pose: .noSnap, chirality: hand)
+                    value = lastValue
                 case .preSnap:
                     lastPreSnap = Date()
-                    value = .init(pose: .preSnap, chirality: hand)
+                    value = .preSnap(hand)
                 case .postSnap:
-                    if let preSnap = lastPreSnap,
-                       -preSnap.timeIntervalSinceNow <= maximumSnapTime {
-                        lastPreSnap = nil
-                        value = .init(pose: .postSnap, chirality: hand)
+                    if let preSnap = lastPreSnap {
+                        if -preSnap.timeIntervalSinceNow <= maximumSnapTime {
+                            value = .postSnap(hand)
+                        } else {
+                            value = .noSnap(hand)
+                        }
                     } else {
-                        value = nil
+                        value = .noSnap(hand)
                     }
+                    // If we are at post snap, either it was fast enough or it wasn't, either way, we reset lastPreSnap
+                    lastPreSnap = nil
                 }
-                return value
+            } else {
+                value = .noSnap(hand)
             }
-        case .left:
-            if let leftHand = handUpdates.left,
-               let snapPose = leftHand.snapPose() {
-                let value: Value?
-                switch snapPose {
-                case .noSnap:
-                    value = .init(pose: .noSnap, chirality: hand)
-                case .preSnap:
-                    lastPreSnap = Date()
-                    value = .init(pose: .preSnap, chirality: hand)
-                case .postSnap:
-                    if let preSnap = lastPreSnap,
-                       -preSnap.timeIntervalSinceNow <= maximumSnapTime {
-                        lastPreSnap = nil
-                        value = .init(pose: .postSnap, chirality: hand)
-                    } else {
-                        value = nil
-                    }
-                }
-                return value
-            }
+            lastValue = value
+            return value
+        } else {
+            return lastValue
         }
-        return .init(pose: .noSnap, chirality: hand)
     }
 }
 
 extension HandAnchorRepresentable {
     func snapPose() -> SnapGesture.SnapPose? {
+        var isPreSnap: Bool = false
+        var isPostSnap: Bool = false
         guard let distanceOne = distanceBetween(.thumbTip, .thumbIntermediateTip),
               let distanceTwo = distanceBetween(.middleFingerTip, .middleFingerIntermediateTip)
         else { return nil }
         if let distance = distanceBetween(.thumbTip, .middleFingerTip),
            distance < distanceTwo {
-            return .preSnap
+            isPreSnap = true
         }
         if let distance = distanceBetween(.thumbIntermediateTip, .middleFingerIntermediateTip),
            distance < distanceTwo {
-            return .preSnap
+            isPreSnap = true
         }
         if let distance = distanceBetween(.middleFingerTip, .indexFingerMetacarpal),
            distance < distanceOne+distanceTwo {
-            return .postSnap
+            isPostSnap = true
         }
         if let distance = distanceBetween(.middleFingerTip, .thumbKnuckle),
            distance/2 < max(distanceOne,distanceTwo) {
+            isPostSnap = true
+        }
+        
+        switch (isPreSnap, isPostSnap) {
+        case (false, false):
+            return nil
+        case (true, true):
+            return nil
+        case (true, false):
+            return .preSnap
+        case (false, true):
             return .postSnap
         }
-        return nil
     }
 }
