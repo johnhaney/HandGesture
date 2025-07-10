@@ -25,6 +25,13 @@ public class HandTrackingModel {
     public struct HandsUpdates {
         public var left: (any HandAnchorRepresentable)?
         public var right: (any HandAnchorRepresentable)?
+        
+        subscript(key: HandAnchor.Chirality) -> (any HandAnchorRepresentable)? {
+            switch key {
+            case .left: left
+            case .right: right
+            }
+        }
     }
     
     init() {
@@ -74,6 +81,7 @@ public class HandTrackingModel {
         #if os(visionOS)
         for await hand in ARUnderstanding.handUpdates {
             guard trackingSession == self.trackingSession else { return }
+            guard hand.event != .removed else { continue }
             switch hand.anchor.chirality {
             case .left:
                 latestHandTracking.left = hand.anchor
