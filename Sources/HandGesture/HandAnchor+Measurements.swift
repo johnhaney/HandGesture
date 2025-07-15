@@ -51,7 +51,6 @@ public extension HandAnchorRepresentable {
         // Palm plane and normal
         let palmRight = normalize(index - wrist)
         let palmLeft = normalize(little - wrist)
-        let palmForward = normalize((index + little) * 0.5 - wrist)
 
         // Normal direction from wrist to palm plane
         let normalToPalm: SIMD3<Float>
@@ -169,17 +168,13 @@ public extension HandAnchorRepresentable {
     }
     
     public func indexIntermediateBend() -> Angle {
-        guard let indexTip = position(joint: .indexFingerTip),
-              let indexIntermediateTip = position(joint: .indexFingerIntermediateTip),
+        guard let indexIntermediateTip = position(joint: .indexFingerIntermediateTip),
               let indexIntermediateBase = position(joint: .indexFingerIntermediateBase),
-              let indexKnuckle = position(joint: .indexFingerKnuckle),
-              let indexMetacarpal = position(joint: .indexFingerMetacarpal)
+              let indexKnuckle = position(joint: .indexFingerKnuckle)
         else { return .zero }
 
-        let vector1 = normalize(indexTip - indexIntermediateTip)
         let vector2 = normalize(indexIntermediateTip - indexIntermediateBase)
         let vector3 = normalize(indexIntermediateBase - indexKnuckle)
-        let vector4 = normalize(indexKnuckle - indexMetacarpal)
 
         let angle2 = acos(dot(vector2, vector3))
 
@@ -187,9 +182,7 @@ public extension HandAnchorRepresentable {
     }
     
     public func indexBaseBend() -> Angle {
-        guard let indexTip = position(joint: .indexFingerTip),
-              let indexIntermediateTip = position(joint: .indexFingerIntermediateTip),
-              let indexIntermediateBase = position(joint: .indexFingerIntermediateBase),
+        guard let indexIntermediateBase = position(joint: .indexFingerIntermediateBase),
               let indexKnuckle = position(joint: .indexFingerKnuckle),
               let indexMetacarpal = position(joint: .indexFingerMetacarpal)
         else { return .zero }
@@ -251,17 +244,13 @@ public extension HandAnchorRepresentable {
     }
     
     public func middleIntermediateBend() -> Angle {
-        guard let middleTip = position(joint: .middleFingerTip),
-              let middleIntermediateTip = position(joint: .middleFingerIntermediateTip),
+        guard let middleIntermediateTip = position(joint: .middleFingerIntermediateTip),
               let middleIntermediateBase = position(joint: .middleFingerIntermediateBase),
-              let middleKnuckle = position(joint: .middleFingerKnuckle),
-              let middleMetacarpal = position(joint: .middleFingerMetacarpal)
+              let middleKnuckle = position(joint: .middleFingerKnuckle)
         else { return .zero }
 
-        let vector1 = normalize(middleTip - middleIntermediateTip)
         let vector2 = normalize(middleIntermediateTip - middleIntermediateBase)
         let vector3 = normalize(middleIntermediateBase - middleKnuckle)
-        let vector4 = normalize(middleKnuckle - middleMetacarpal)
 
         let angle2 = acos(dot(vector2, vector3))
 
@@ -269,9 +258,7 @@ public extension HandAnchorRepresentable {
     }
     
     public func middleBaseBend() -> Angle {
-        guard let middleTip = position(joint: .middleFingerTip),
-              let middleIntermediateTip = position(joint: .middleFingerIntermediateTip),
-              let middleIntermediateBase = position(joint: .middleFingerIntermediateBase),
+        guard let middleIntermediateBase = position(joint: .middleFingerIntermediateBase),
               let middleKnuckle = position(joint: .middleFingerKnuckle),
               let middleMetacarpal = position(joint: .middleFingerMetacarpal)
         else { return .zero }
@@ -333,17 +320,13 @@ public extension HandAnchorRepresentable {
     }
     
     public func ringIntermediateBend() -> Angle {
-        guard let ringTip = position(joint: .ringFingerTip),
-              let ringIntermediateTip = position(joint: .ringFingerIntermediateTip),
+        guard let ringIntermediateTip = position(joint: .ringFingerIntermediateTip),
               let ringIntermediateBase = position(joint: .ringFingerIntermediateBase),
-              let ringKnuckle = position(joint: .ringFingerKnuckle),
-              let ringMetacarpal = position(joint: .ringFingerMetacarpal)
+              let ringKnuckle = position(joint: .ringFingerKnuckle)
         else { return .zero }
 
-        let vector1 = normalize(ringTip - ringIntermediateTip)
         let vector2 = normalize(ringIntermediateTip - ringIntermediateBase)
         let vector3 = normalize(ringIntermediateBase - ringKnuckle)
-        let vector4 = normalize(ringKnuckle - ringMetacarpal)
 
         let angle2 = acos(dot(vector2, vector3))
 
@@ -351,9 +334,7 @@ public extension HandAnchorRepresentable {
     }
     
     public func ringBaseBend() -> Angle {
-        guard let ringTip = position(joint: .ringFingerTip),
-              let ringIntermediateTip = position(joint: .ringFingerIntermediateTip),
-              let ringIntermediateBase = position(joint: .ringFingerIntermediateBase),
+        guard let ringIntermediateBase = position(joint: .ringFingerIntermediateBase),
               let ringKnuckle = position(joint: .ringFingerKnuckle),
               let ringMetacarpal = position(joint: .ringFingerMetacarpal)
         else { return .zero }
@@ -415,17 +396,13 @@ public extension HandAnchorRepresentable {
     }
     
     public func littleIntermediateBend() -> Angle {
-        guard let littleTip = position(joint: .littleFingerTip),
-              let littleIntermediateTip = position(joint: .littleFingerIntermediateTip),
+        guard let littleIntermediateTip = position(joint: .littleFingerIntermediateTip),
               let littleIntermediateBase = position(joint: .littleFingerIntermediateBase),
-              let littleKnuckle = position(joint: .littleFingerKnuckle),
-              let littleMetacarpal = position(joint: .littleFingerMetacarpal)
+              let littleKnuckle = position(joint: .littleFingerKnuckle)
         else { return .zero }
 
-        let vector1 = normalize(littleTip - littleIntermediateTip)
         let vector2 = normalize(littleIntermediateTip - littleIntermediateBase)
         let vector3 = normalize(littleIntermediateBase - littleKnuckle)
-        let vector4 = normalize(littleKnuckle - littleMetacarpal)
 
         let angle2 = acos(dot(vector2, vector3))
 
@@ -433,9 +410,7 @@ public extension HandAnchorRepresentable {
     }
     
     public func littleBaseBend() -> Angle {
-        guard let littleTip = position(joint: .littleFingerTip),
-              let littleIntermediateTip = position(joint: .littleFingerIntermediateTip),
-              let littleIntermediateBase = position(joint: .littleFingerIntermediateBase),
+        guard let littleIntermediateBase = position(joint: .littleFingerIntermediateBase),
               let littleKnuckle = position(joint: .littleFingerKnuckle),
               let littleMetacarpal = position(joint: .littleFingerMetacarpal)
         else { return .zero }
