@@ -5,12 +5,14 @@
 //  Created by John Haney on 12/2/24.
 //
 
+#if canImport(RealityKit)
 import Foundation
 #if canImport(ARKit)
 import ARKit
 #endif
 import ARUnderstanding
 
+@available(tvOS 26.0, *)
 public class HoldingSphereGesture: HandGesture {
     // The attributes of a holding sphere gesture
     public struct Value : Equatable, Sendable {
@@ -47,3 +49,4 @@ public class HoldingSphereGesture: HandGesture {
     
     public typealias Body = Never
 }
+#endif

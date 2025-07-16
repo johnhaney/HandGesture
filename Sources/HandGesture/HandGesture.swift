@@ -7,7 +7,9 @@
 
 import ARUnderstanding
 import SwiftUI
+#if canImport(RealityKit)
 import RealityKit
+#endif
 #if canImport(ARKit)
 import ARKit
 #endif

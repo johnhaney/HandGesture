@@ -5,6 +5,7 @@
 //  Created by John Haney on 12/5/24.
 //
 
+#if canImport(RealityKit)
 import Foundation
 import ARUnderstanding
 #if canImport(ARKit)
@@ -14,6 +15,7 @@ import ARKit
 import RealityKit
 import Spatial
 
+@available(tvOS 26.0, *)
 public class ClapGesture: HandGesture {
     public struct Value : Equatable, Sendable {
         public let transform: Transform
@@ -36,6 +38,7 @@ public class ClapGesture: HandGesture {
     }
 }
 
+@available(tvOS 26.0, *)
 extension HandAnchorRepresentable {
     func isClapping(_ otherHand: any HandAnchorRepresentable) -> Bool {
         guard let leftPalm = self.position(at: .insidePalm),
@@ -47,3 +50,4 @@ extension HandAnchorRepresentable {
         return distance(leftPalm, rightPalm) <= 0.03
     }
 }
+#endif
