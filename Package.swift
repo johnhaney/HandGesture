@@ -17,7 +17,7 @@ let package = Package(
             targets: ["HandGesture"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/johnhaney/ARUnderstanding", from: "18.0.0"),
+        .package(url: "https://github.com/johnhaney/ARUnderstanding", from: "26.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

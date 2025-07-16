@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  HandGesture+onChanged.swift
 //  HandGesture
 //
 //  Created by John Haney on 4/10/25.

@@ -28,7 +28,7 @@ public enum SyntheticHandPosition: CaseIterable {
     case insidePalm
 }
 
-public extension HandAnchorRepresentable {
+extension HandAnchorRepresentable {
     public var palmDirection: SIMD3<Float> { [0,0,0] }
     
     public var wristLeftRight: Angle {
