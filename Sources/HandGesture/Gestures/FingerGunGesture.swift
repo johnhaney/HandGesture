@@ -5,6 +5,7 @@
 //  Created by John Haney on 12/2/24.
 //
 
+#if canImport(RealityKit)
 import Foundation
 #if canImport(ARKit)
 import ARKit
@@ -13,6 +14,7 @@ import RealityKit
 import Spatial
 import ARUnderstanding
 
+@available(tvOS 26.0, *)
 public class FingerGunGesture: HandGesture {
     public struct Value: Equatable, Sendable {
         public let vector: Transform
@@ -53,3 +55,4 @@ public class FingerGunGesture: HandGesture {
         }
     }
 }
+#endif

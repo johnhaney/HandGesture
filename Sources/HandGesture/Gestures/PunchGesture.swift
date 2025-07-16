@@ -5,6 +5,7 @@
 //  Created by John Haney on 12/2/24.
 //
 
+#if canImport(RealityKit)
 import Foundation
 #if canImport(ARKit)
 import ARKit
@@ -13,6 +14,7 @@ import RealityKit
 import Spatial
 import ARUnderstanding
 
+@available(tvOS 26.0, *)
 public class PunchGesture: HandGesture {
     public struct Value: Equatable, Sendable {
         public var velocity: SIMD3<Float>
@@ -58,10 +60,12 @@ public class PunchGesture: HandGesture {
     }
 }
 
+@available(tvOS 26.0, *)
 public struct Fist: Equatable, Sendable {
     public let transform: Transform
 }
 
+@available(tvOS 26.0, *)
 extension HandAnchorRepresentable {
     func fistPose() -> Fist? {
         guard let skeleton = self.handSkeleton else { return nil }
@@ -100,3 +104,4 @@ extension HandAnchorRepresentable {
             translation: lhs2))
     }
 }
+#endif
