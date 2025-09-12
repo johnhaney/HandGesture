@@ -9,6 +9,9 @@ let package = Package(
         .visionOS(.v2),
         .iOS(.v18),
         .macOS(.v15),
+        .macCatalyst(.v17),
+        .tvOS(.v17),
+        .watchOS(.v10),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -17,7 +20,7 @@ let package = Package(
             targets: ["HandGesture"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/johnhaney/ARUnderstanding", from: "18.0.0"),
+        .package(url: "https://github.com/johnhaney/ARUnderstanding", from: "26.0.2"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

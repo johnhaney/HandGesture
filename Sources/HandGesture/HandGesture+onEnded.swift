@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  HandGesture+onEnded.swift
 //  HandGesture
 //
 //  Created by John Haney on 4/10/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public extension HandGesture {
+extension HandGesture {
     public func onEnded(perform action: @escaping (Value) -> Void) -> EndGesture<Self> {
         EndGesture(self, perform: action)
     }

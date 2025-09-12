@@ -89,6 +89,9 @@ public class SnapGesture: HandGesture {
 @available(tvOS 26.0, *)
 extension HandAnchorRepresentable {
     func snapPose() -> SnapGesture.SnapPose? {
+        if #available(visionOS 26.0, *) {
+            guard self.fidelity == .high else { return .noSnap }
+        }
         var isPreSnap: Bool = false
         var isPostSnap: Bool = false
         guard let distanceOne = distanceBetween(.thumbTip, .thumbIntermediateTip),

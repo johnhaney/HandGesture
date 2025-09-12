@@ -22,7 +22,7 @@ public class PunchGesture: HandGesture {
     }
     
     var hand: HandAnchor.Chirality
-    var previous: Fist?
+    var previous: Value?
 
     public init(hand: HandAnchor.Chirality) {
         self.hand = hand
@@ -32,29 +32,43 @@ public class PunchGesture: HandGesture {
         let value: Value
         switch hand {
         case .right:
-            guard let rightHand = handUpdates.right,
-                  let fist = rightHand.fistPose() else {
+            guard let rightHand = handUpdates.right else {
+                return previous
+            }
+            if #available(visionOS 26.0, *) {
+                guard rightHand.fidelity == .high else {
+                    return previous
+                }
+            }
+            guard let fist = rightHand.fistPose() else {
                 previous = nil
                 return nil
             }
             if let previous {
-                value = Value(velocity: (fist.transform.translation - previous.transform.translation) * 60, fist: fist)
+                value = Value(velocity: (fist.transform.translation - previous.fist.transform.translation) * 60, fist: fist)
             } else {
                 value = Value(velocity: .zero, fist: fist)
             }
-            previous = fist
+            previous = value
         case .left:
-            guard let leftHand = handUpdates.left,
-                  let fist = leftHand.fistPose() else {
+            guard let leftHand = handUpdates.left else {
+                return previous
+            }
+            if #available(visionOS 26.0, *) {
+                guard leftHand.fidelity == .high else {
+                    return previous
+                }
+            }
+            guard let fist = leftHand.fistPose() else {
                 previous = nil
                 return nil
             }
             if let previous {
-                value = Value(velocity: (fist.transform.translation - previous.transform.translation) * 60, fist: fist)
+                value = Value(velocity: (fist.transform.translation - previous.fist.transform.translation) * 60, fist: fist)
             } else {
                 value = Value(velocity: .zero, fist: fist)
             }
-            previous = fist
+            previous = value
         }
         return value
     }
