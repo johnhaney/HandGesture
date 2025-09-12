@@ -5,12 +5,14 @@
 //  Created by John Haney on 12/2/24.
 //
 
+#if canImport(RealityKit)
 import Foundation
 #if canImport(ARKit)
 import ARKit
 #endif
 import ARUnderstanding
 
+@available(tvOS 26.0, *)
 public class SnapGesture: HandGesture {
     public struct Value : Equatable, Sendable {
         public let pose: SnapPose
@@ -84,6 +86,7 @@ public class SnapGesture: HandGesture {
     }
 }
 
+@available(tvOS 26.0, *)
 extension HandAnchorRepresentable {
     func snapPose() -> SnapGesture.SnapPose? {
         if #available(visionOS 26.0, *) {
@@ -123,3 +126,4 @@ extension HandAnchorRepresentable {
         }
     }
 }
+#endif

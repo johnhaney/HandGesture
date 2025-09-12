@@ -5,6 +5,7 @@
 //  Created by John Haney on 11/29/24.
 //
 
+#if canImport(RealityKit)
 import ARUnderstanding
 import RealityKit
 #if canImport(ARKit)
@@ -28,6 +29,7 @@ public enum SyntheticHandPosition: CaseIterable {
     case insidePalm
 }
 
+@available(tvOS 26.0, *)
 extension HandAnchorRepresentable {
     public var palmDirection: SIMD3<Float> { [0,0,0] }
     
@@ -616,3 +618,4 @@ public func distance(_ lhs: SIMD3<Float>, _ rhs: SIMD3<Float>) -> Float {
 public func length_squared(_ lhs: SIMD3<Float>) -> Float {
     lhs.x * lhs.x + lhs.y * lhs.y + lhs.z * lhs.z
 }
+#endif
