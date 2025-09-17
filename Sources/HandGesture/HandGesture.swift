@@ -19,11 +19,24 @@ public protocol HandGesture: AnyObject {
     func update(with: HandTrackingModel.HandsUpdates) -> Value?
 }
 
-public class HandTrackingModel {
+public class HandTrackingModel: ARUnderstandingOutput {
     @MainActor static let shared: HandTrackingModel = HandTrackingModel()
     var latestHandTracking: HandsUpdates
     @MainActor private var gestures: [UUID: any HandGesture] = [:]
-    private var trackingSession: UUID? = nil
+    @MainActor private var trackingSession: UUID? = nil {
+        didSet {
+            if let oldValue {
+                Self.stopTracking(session: oldValue)
+            }
+        }
+    }
+    @MainActor private var liveInputName: String? = nil {
+        didSet {
+            if let oldValue {
+                ARUnderstanding.session.remove(inputNamed: oldValue)
+            }
+        }
+    }
     public struct HandsUpdates {
         public var left: (any HandAnchorRepresentable)?
         public var right: (any HandAnchorRepresentable)?
@@ -38,6 +51,23 @@ public class HandTrackingModel {
     
     init() {
         latestHandTracking = HandsUpdates()
+    }
+    
+    deinit {
+        if let liveInputName {
+            Task {
+                await MainActor.run {
+                    ARUnderstanding.session.remove(inputNamed: liveInputName)
+                }
+            }
+        }
+        if let trackingSession {
+            Task {
+                await MainActor.run {
+                    HandTrackingModel.stopTracking(session: trackingSession)
+                }
+            }
+        }
     }
     
     @MainActor func update() {
@@ -79,20 +109,48 @@ public class HandTrackingModel {
         latestHandTracking.right = nil
     }
     
+    @MainActor static func stopTracking(session trackingSession: UUID) {
+        #if os(visionOS)
+        ARUnderstanding.session.remove(outputNamed: "com.appsyoucanmake.HandGesture.\(trackingSession)")
+        #endif
+    }
+    
     @MainActor func doTracking(_ trackingSession: UUID) async {
         #if os(visionOS)
-        for await hand in ARUnderstanding.handUpdates {
-            guard trackingSession == self.trackingSession else { return }
-            guard hand.event != .removed else { continue }
-            switch hand.anchor.chirality {
-            case .left:
-                latestHandTracking.left = hand.anchor
-            case .right:
-                latestHandTracking.right = hand.anchor
-            }
-            update()
+        ARUnderstanding.session.add(output: self, name: "com.appsyoucanmake.HandGesture.\(trackingSession)")
+        if !ARUnderstanding.session.isRunning {
+            self.liveInputName = ARUnderstanding.session.add(input: ARUnderstandingLiveInput(providers: [.hands]))
+            ARUnderstanding.session.start()
         }
         #endif
+    }
+    
+    public func handle(_ message: ARUnderstandingSession.Message) async {
+        switch message {
+        case .newSession:
+            break
+        case .anchor(let capturedAnchor):
+            switch capturedAnchor {
+            case .hand(let hand):
+                guard trackingSession == self.trackingSession else { return }
+                guard capturedAnchor.event != .removed else { return }
+                switch hand.anchor.chirality {
+                case .left:
+                    latestHandTracking.left = hand.anchor
+                case .right:
+                    latestHandTracking.right = hand.anchor
+                }
+                update()
+            default:
+                break
+            }
+        case .authorizationDenied(let string):
+            stopTracking()
+        case .trackingError(let string):
+            stopTracking()
+        case .unknown:
+            break
+        }
     }
 }
 
