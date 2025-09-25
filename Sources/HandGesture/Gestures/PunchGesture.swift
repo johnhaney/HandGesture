@@ -95,24 +95,6 @@ extension HandAnchorRepresentable {
             if linear > 0.3 { return nil }
         }
         
-        do {
-            let fingerDirection = normalize(lhs3 - lhs2)
-            let linear = dot(palmDirection, fingerDirection)
-            if linear > 0.3 { return nil }
-        }
-        
-        do {
-            let fingerDirection = normalize(lhs3 - lhs2)
-            let linear = dot(palmDirection, fingerDirection)
-            if linear > 0.3 { return nil }
-        }
-        
-        do {
-            let fingerDirection = normalize(lhs3 - lhs2)
-            let linear = dot(palmDirection, fingerDirection)
-            if linear > 0.3 { return nil }
-        }
-        
         return Fist(transform: Transform(
             rotation: simd_quatf(Rotation3D(forward: Vector3D(palmDirection))),
             translation: lhs2))
